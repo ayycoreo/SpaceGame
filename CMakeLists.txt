@@ -26,7 +26,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
     )
 endif()
 
-# Platform-specific settings (example)
+# Platform-specific settings
 if (WIN32)
     # Windows-specific settings can go here
 elseif(APPLE)
