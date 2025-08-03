@@ -1,0 +1,23 @@
+# Ignore build artifacts and OS-specific files
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.exe
+*.obj
+*.o
+*.log
+*.user
+*.DS_Store
+*.vcxproj*
+*.sln
+*.swp
+*.idea/
+.vscode/
+# Ignore Mac and Windows system files
+.DS_Store
+Thumbs.db
+desktop.ini
+# Ignore generated install manifests
+install_manifest*.txt

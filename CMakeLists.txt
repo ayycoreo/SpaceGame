@@ -9,16 +9,29 @@
 # Automation: Automates the build process, so you don’t have to write platform-specific build scripts.
 # Integration: Works well with IDEs like Visual Studio Code, CLion, and Visual Studio.
 # Dependency Management: Can automatically download and build dependencies.
+
 cmake_minimum_required(VERSION 3.10)
-project(CPLUSplus)
+project(CPPGaming)
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(CPLUSplus main.cpp CPPNotes.cpp)  #add the cpp files here to ensure they are built 
+# Add all source files here
+add_executable(CPPGaming main.cpp CPPNotes.cpp)
 
-set_target_properties(CPLUSplus PROPERTIES
-        UNITY_BUILD ON # Enabling unity build can speed up compilation
-        UNITY_BUILD_MODE BATCH #  BATCH mode means that multiple sources are combined together into a single compliation unit.
-        UNITY_BUILD_BATCH_SIZE 10 ) # the batch size specifies how many source files to combine in one compliation unit.
+# Enable unity build if supported (CMake 3.16+)
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
+    set_target_properties(CPPGaming PROPERTIES
+        UNITY_BUILD ON
+        UNITY_BUILD_MODE BATCH
+        UNITY_BUILD_BATCH_SIZE 10
+    )
+endif()
+
+# Platform-specific settings (example)
+if (WIN32)
+    # Windows-specific settings can go here
+elseif(APPLE)
+    # macOS-specific settings can go here
+endif()
 
 
 # CMake’s built-in unity build feature (UNITY_BUILD) supports two build modes:
