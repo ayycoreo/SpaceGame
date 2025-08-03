@@ -1,8 +1,0 @@
-[
-{
-  "directory": "C:/Users/corey/OneDrive/Documents/CPLUSplus/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe   -g -std=gnu++17 -o CMakeFiles\\CPLUSplus.dir\\Unity\\unity_0_cxx.cxx.obj -c C:\\Users\\corey\\OneDrive\\Documents\\CPLUSplus\\build\\CMakeFiles\\CPLUSplus.dir\\Unity\\unity_0_cxx.cxx",
-  "file": "C:/Users/corey/OneDrive/Documents/CPLUSplus/build/CMakeFiles/CPLUSplus.dir/Unity/unity_0_cxx.cxx",
-  "output": "CMakeFiles/CPLUSplus.dir/Unity/unity_0_cxx.cxx.obj"
-}
-]
