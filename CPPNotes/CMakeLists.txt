@@ -15,7 +15,7 @@ project(CPPNotes)
 set(CMAKE_CXX_STANDARD 17)
 
 # Add all source files here
-add_executable(CPPGaming main.cpp)   # Update this with the actual code files 
+add_executable(CPPNotes main.cpp)   # Update this with the actual code files 
 
 # Enable unity build if supported (CMake 3.16+)
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
