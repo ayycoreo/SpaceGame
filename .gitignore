@@ -3,6 +3,7 @@ build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+CMakeSettings.json
 Makefile
 *.exe
 *.obj
@@ -15,6 +16,10 @@ Makefile
 *.swp
 *.idea/
 .vscode/
+/out
+bin/
+/.vs
+.idea/
 # Ignore Mac and Windows system files
 .DS_Store
 Thumbs.db

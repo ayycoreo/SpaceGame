@@ -1,45 +1,94 @@
-# what us CMakeLists and is important w/ c++ projects
+#Version 1.0.0
 
-# A CMakeLists.txt file is a configuration file used by CMake, a popular cross-platform build system for C++ (and other languages). 
-# It describes how to build your project: which source files to compile, what libraries to link, what compiler options to use, and more.
+cmake_minimum_required(VERSION 3.16)
 
-# Why is it important for C++ projects?
 
-# Portability: Makes it easier to build your project on different platforms (Windows, Linux, macOS).
-# Automation: Automates the build process, so you don’t have to write platform-specific build scripts.
-# Integration: Works well with IDEs like Visual Studio Code, CLion, and Visual Studio.
-# Dependency Management: Can automatically download and build dependencies.
+#set this to true to ship the game!
+#! ! ! ! ! ! !
+#DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
+option(PRODUCTION_BUILD "Make this a production build" OFF)
+#DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
 
-cmake_minimum_required(VERSION 3.10)
-project(CPPGaming)
-set(CMAKE_CXX_STANDARD 17)
-
-# Add all source files here
-add_executable(CPPGaming main.cpp CPPNotes.cpp)
-
-# Enable unity build if supported (CMake 3.16+)
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
-    set_target_properties(CPPGaming PROPERTIES
-        UNITY_BUILD ON
-        UNITY_BUILD_MODE BATCH
-        UNITY_BUILD_BATCH_SIZE 10
-    )
-endif()
-
-# Platform-specific settings
-if (WIN32)
-    # Windows-specific settings can go here
-elseif(APPLE)
-    # macOS-specific settings can go here
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+else()
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
 
-# CMake’s built-in unity build feature (UNITY_BUILD) supports two build modes:
 
-#  1. BATCH
-# Multiple source files are combined into a single compilation unit in batches.
-# The batch size is controlled by UNITY_BUILD_BATCH_SIZE.
+#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug$<$<CONFIG:Debug>:Debug>")
+#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
-#  2. GROUP
-# Source files are grouped by their source group (e.g., folder or logical group in CMake).
-# All files in a group are combined into a single compilation unit.
+project(SpaceGame)
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(thirdparty/glfw-3.3.2)			#window opener
+add_subdirectory(thirdparty/glad)				#opengl loader
+add_subdirectory(thirdparty/stb_image)			#loading immaged
+add_subdirectory(thirdparty/stb_truetype)		#loading ttf files
+#add_subdirectory(thirdparty/enet-1.3.17)		#networking
+add_subdirectory(thirdparty/raudio)				#audio
+add_subdirectory(thirdparty/glm)				#math
+add_subdirectory(thirdparty/imgui-docking)		#ui
+#----------V-----------------------V------------#my libraries												
+add_subdirectory(thirdparty/safeSave)			#saving data, designed for gamedev. It also makes backups so the player won't loose saves.
+add_subdirectory(thirdparty/profilerLib)		#profiling, just a simpe library for measuring elapsed time
+add_subdirectory(thirdparty/gl2d)				#2D rendering library
+add_subdirectory(thirdparty/glui)				#ui library, usefull for making game menus
+
+
+# Define MY_SOURCES to be a list of all the source files for my game 
+file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+
+
+add_executable("${CMAKE_PROJECT_NAME}")
+
+set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY CXX_STANDARD 17)
+
+
+
+if(PRODUCTION_BUILD)
+	# setup the ASSETS_PATH macro to be in the root folder of your exe
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="./resources/") 
+
+	# remove the option to debug asserts.
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PRODUCTION_BUILD=1) 
+
+else()
+	# This is useful to get an ASSETS_PATH in your IDE during development
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/")
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PRODUCTION_BUILD=0) 
+
+endif()
+
+target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES})
+
+
+if(MSVC) # If using the VS compiler...
+
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC _CRT_SECURE_NO_WARNINGS)
+
+	set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup") #no console
+	
+	#set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug<$<CONFIG:Debug>:Debug>")
+	#set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
+
+endif()
+
+target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/gameLayer/")
+target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/platform/")
+
+
+#target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw 
+#	glad stb_image stb_truetype gl2d raudio imgui safeSave profilerLib enet glui)
+
+#enet not working yet on linux for some reason
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw 
+	glad stb_image stb_truetype gl2d raudio imgui safeSave profilerLib glui)
