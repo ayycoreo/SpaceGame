@@ -12,14 +12,30 @@
 #include <platformTools.h>
 
 
+struct GamePlayData 
+{
+	glm::vec2 playerPosition = {100,100};
 
+
+};
+
+
+
+
+
+GamePlayData gamePlayData;
 gl2d::Renderer2D renderer;
+gl2d::Texture playerShipTexture;
+
+
 
 bool initGame()
 {
 	//initializing stuff for the renderer
 	gl2d::init();
 	renderer.create();
+
+	playerShipTexture.loadFromFile(RESOURCES_PATH "spaceShip/ships/coolBlackShip.png", true);
 
 	
 	
@@ -43,10 +59,46 @@ bool gameLogic(float deltaTime)
 
 
 
-	renderer.renderRectangle({100,100, 100, 100}, Colors_Blue);
+#pragma region player movement
+	glm::vec2 playerMovement = {};
 
 
-	renderer.flush();
+	// Remeber that the origin is at th top left corner of the screen, so that means that for y going down the screen increases y and going up the screen decreases y
+
+
+	if(platform::isButtonHeld(platform::Button::W) || platform::isButtonHeld(platform::Button::Up))
+	{
+		playerMovement.y = -1;
+	}
+	if(platform::isButtonHeld(platform::Button::S) || platform::isButtonHeld(platform::Button::Down))
+	{
+		playerMovement.y = 1;
+	}
+	if(platform::isButtonHeld(platform::Button::A) || platform::isButtonHeld(platform::Button::Left))
+	{
+		playerMovement.x = -1;
+	}
+	if(platform::isButtonHeld(platform::Button::D) || platform::isButtonHeld(platform::Button::Right))
+	{
+		playerMovement.x = 1;
+	}
+
+	if( playerMovement.x != 0 || playerMovement.y != 0) 
+	{
+		playerMovement = glm::normalize(playerMovement);
+		playerMovement *= 300 * deltaTime; //move player at 300 pixels per second
+		gamePlayData.playerPosition += playerMovement;
+	}
+
+
+#pragma endregion
+
+
+	// How to read the { x , x , x, x} vector: The first two elements are the position (x, y) and the last two are the size (width, height).
+	renderer.renderRectangle({gamePlayData.playerPosition, 100, 100}, playerShipTexture);
+
+
+	renderer.flush();  // informing the GPU to draw the things that were added to the renderer
 
 
 	//ImGui::ShowDemoWindow();
