@@ -3,7 +3,7 @@ Here is a glimpse of what it will be...
 
 <div>
   <a>
-    <p>Corey Ortiz & Kido Douglass - Game Demo </p>
+    <p>Corey Ortiz - Game Demo </p>
   </a>
 </div>
 
